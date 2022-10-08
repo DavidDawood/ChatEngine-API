@@ -1,0 +1,28 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { SessionStorage } from './SessionStorage/sessionStorage.entity';
+import { User } from './User/user.entity';
+import { Session } from './Session/session.entity';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localHost',
+      port: 3306,
+      username: process.env.USER,
+      password: process.env.PASSWORD,
+      database: process.env.DATABASE,
+      entities: [SessionStorage, User, Session],
+      synchronize: false,
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+
+export class AppModule {}
