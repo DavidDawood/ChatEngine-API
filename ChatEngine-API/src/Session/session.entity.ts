@@ -14,4 +14,9 @@ export class Session {
 
   @OneToOne((type) => SessionStorage, (sessionStorage) => sessionStorage.id)
   sessionStorageID: number;
+
+  constructor(userID1: number, userID2: number) {
+    this.user1ID = userID1;
+    this.user2ID = userID2;
+  }
 }

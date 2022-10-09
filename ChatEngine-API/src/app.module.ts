@@ -7,6 +7,8 @@ import { SessionStorage } from './SessionStorage/sessionStorage.entity';
 import { User } from './User/user.entity';
 import { Session } from './Session/session.entity';
 import { UsersModule } from './User/user.module';
+import { SessionStorageController } from './SessionStorage/sessionStorage.controller';
+import { SessionModule } from './Session/session.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { UsersModule } from './User/user.module';
       synchronize: true,
     }),
     UsersModule,
+    SessionStorageController,
+    SessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

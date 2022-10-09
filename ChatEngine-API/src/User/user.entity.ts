@@ -10,7 +10,7 @@ export class User {
   username: string;
 
   @OneToMany((type) => Session, (session) => session.id)
-  sessionID: Session[];
+  sessionIDs: Session[];
 
   constructor(username: string) {
     this.username = username;
