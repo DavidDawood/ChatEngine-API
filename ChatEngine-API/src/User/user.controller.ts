@@ -5,10 +5,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseFilters,
 } from '@nestjs/common';
 
 import { UserDTO } from './user.DTO';
 import { User } from './user.entity';
+import { UserFilter } from './user.filter';
 import { UsersService } from './user.service';
 
 @Controller('/User')
@@ -22,8 +24,10 @@ export class UserController {
   async find(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.service.find(id);
   }
+
   @Post('')
-  async createUser(@Body() info: UserDTO) {
-    this.service.addUser(info.username);
+  @UseFilters(new UserFilter())
+  async createUser(@Body() login: UserDTO): Promise<User> {
+    return await this.service.addUser(login.username);
   }
 }

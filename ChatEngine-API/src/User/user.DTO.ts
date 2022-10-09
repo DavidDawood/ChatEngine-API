@@ -1,9 +1,8 @@
-import { IsString, Max, Min } from 'class-validator';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 
-// do a DTO here
 export class UserDTO {
   @IsString()
-  @Min(3)
-  @Max(20)
+  @MinLength(3)
+  @MaxLength(20)
   username: string;
 }

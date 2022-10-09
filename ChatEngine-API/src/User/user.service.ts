@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -17,12 +17,27 @@ export class UsersService {
 
     return item;
   }
+  async findByName(name: string): Promise<User> {
+    const item = await this.usersRepository.findOneOrFail({
+      where: { username: name },
+    });
+
+    return item;
+  }
   async findAll(): Promise<User[]> {
     const item = await this.usersRepository.find();
     return item;
   }
 
-  async addUser(username: string): Promise<void> {
-    this.usersRepository.save(new User(username));
+  async addUser(username: string): Promise<User> {
+    try {
+      await this.findByName(username);
+    } catch {
+      return this.usersRepository.save(new User(username));
+    }
+    throw new HttpException(
+      'username Found, login to it instead',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }
