@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SessionStorage } from './SessionStorage/sessionStorage.entity';
 import { User } from './User/user.entity';
 import { Session } from './Session/session.entity';
+import { UsersModule } from './User/user.module';
 
 @Module({
   imports: [
@@ -20,9 +21,9 @@ import { Session } from './Session/session.entity';
       entities: [SessionStorage, User, Session],
       synchronize: false,
     }),
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-
 export class AppModule {}

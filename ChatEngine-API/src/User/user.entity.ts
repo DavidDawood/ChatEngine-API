@@ -11,4 +11,8 @@ export class User {
 
   @OneToMany((type) => Session, (session) => session.id)
   sessionID: Session[];
+
+  constructor(username: string) {
+    this.username = username;
+  }
 }
