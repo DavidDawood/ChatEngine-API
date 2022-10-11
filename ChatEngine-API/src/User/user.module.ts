@@ -8,5 +8,7 @@ import { UsersService } from './user.service';
   imports: [TypeOrmModule.forFeature([User])],
   providers: [UsersService],
   controllers: [UserController],
+  exports: [UsersService],
+  // exporting is a must due to sessionServices using userServices
 })
 export class UsersModule {}

@@ -1,5 +1,12 @@
 import { Session } from 'src/Session/session.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
+import { UserSessionPacket } from './userSessionCollection.entity';
 
 @Entity()
 export class User {
@@ -9,8 +16,13 @@ export class User {
   @Column()
   username: string;
 
-  @OneToMany((type) => Session, (session) => session.id)
-  sessionIDs: Session[];
+  @Column()
+  @OneToMany(
+    () => UserSessionPacket,
+    (collection) => collection.collectionOwnershipID,
+    { cascade: true },
+  )
+  collection: UserSessionPacket[];
 
   constructor(username: string) {
     this.username = username;

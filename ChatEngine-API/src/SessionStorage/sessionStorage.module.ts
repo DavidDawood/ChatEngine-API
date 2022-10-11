@@ -6,7 +6,7 @@ import { SessionStorageService } from './sessionStorage.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SessionStorage])],
-  providers: [SessionStorageService],
   controllers: [SessionStorageController],
+  providers: [SessionStorageService],
 })
 export class SessionStorageModule {}

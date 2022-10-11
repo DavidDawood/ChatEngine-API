@@ -7,5 +7,5 @@ import {
   Post,
   UseFilters,
 } from '@nestjs/common';
-@Controller()
+@Controller('/storage')
 export class SessionStorageController {}
