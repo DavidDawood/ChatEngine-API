@@ -3,13 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { SessionStorage } from './SessionStorage/sessionStorage.entity';
 import { User } from './User/user.entity';
 import { Session } from './Session/session.entity';
 import { UsersModule } from './User/user.module';
 import { SessionModule } from './Session/session.module';
-import { SessionStorageModule } from './SessionStorage/sessionStorage.module';
-import { UserSessionCollection } from './User/userSessionCollection.entity';
+import { MessageModule } from './Message/message.module';
+import { Message } from './Message/message.entity';
 
 @Module({
   imports: [
@@ -21,11 +20,11 @@ import { UserSessionCollection } from './User/userSessionCollection.entity';
       username: process.env.USER,
       password: process.env.PASSWORD,
       database: process.env.DATABASE,
-      entities: [SessionStorage, User, Session, UserSessionCollection],
+      entities: [Message, User, Session],
       synchronize: true,
     }),
     UsersModule,
-    SessionStorageModule,
+    MessageModule,
     SessionModule,
   ],
   controllers: [AppController],

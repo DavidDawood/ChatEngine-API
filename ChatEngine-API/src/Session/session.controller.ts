@@ -15,10 +15,10 @@ import { SessionService } from './session.service';
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
-  @Get('')
-  async GetAllSessions() {
-    return await this.sessionService.getAllSessions();
-  }
+  // @Get('')
+  // async GetAllSessions() {
+  //   return await this.sessionService.getAllSessions();
+  // }
   @Post('')
   async CreateSession(@Body() info: SessionDTO): Promise<Session> {
     return await this.sessionService.createSession(info.userID1, info.userID2);

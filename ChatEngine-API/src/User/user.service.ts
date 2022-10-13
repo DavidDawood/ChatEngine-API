@@ -2,14 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { UserSessionPacket } from './userSessionCollection.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private userCollectionRepository: Repository<UserSessionPacket>,
   ) {}
 
   async find(id: number): Promise<User> {
@@ -32,18 +30,6 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     const item = await this.usersRepository.find();
     return item;
-  }
-  async findCollection(userID: number): Promise<UserSessionPacket[]> {
-    try {
-      return this.userCollectionRepository.find({
-        where: { id: userID },
-      });
-    } catch {
-      throw new HttpException(
-        'Missing collection for user or missing user',
-        HttpStatus.NOT_FOUND,
-      );
-    }
   }
 
   async addUser(username: string): Promise<User> {

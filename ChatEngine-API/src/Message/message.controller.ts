@@ -8,4 +8,4 @@ import {
   UseFilters,
 } from '@nestjs/common';
 @Controller('/storage')
-export class SessionStorageController {}
+export class MessageController {}

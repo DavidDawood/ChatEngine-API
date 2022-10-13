@@ -5,8 +5,8 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   OneToOne,
+  ManyToMany,
 } from 'typeorm';
-import { UserSessionPacket } from './userSessionCollection.entity';
 
 @Entity()
 export class User {
@@ -15,14 +15,6 @@ export class User {
 
   @Column()
   username: string;
-
-  @Column()
-  @OneToMany(
-    () => UserSessionPacket,
-    (collection) => collection.collectionOwnershipID,
-    { cascade: true },
-  )
-  collection: UserSessionPacket[];
 
   constructor(username: string) {
     this.username = username;
