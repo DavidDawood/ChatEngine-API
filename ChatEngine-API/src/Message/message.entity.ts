@@ -19,12 +19,13 @@ export class Message {
   @IsDate()
   timeSent: Date;
 
-  @ManyToOne(() => Session, (session) => session)
+  @ManyToOne(() => Session, (session) => session.id)
   session: Session;
 
-  constructor(message: string, sentByID: number) {
-    this.message = message;
+  constructor(messageText: string, sentByID: number, session: Session) {
+    this.message = messageText;
     this.sentByID = sentByID;
     this.timeSent = new Date();
+    this.session = session;
   }
 }

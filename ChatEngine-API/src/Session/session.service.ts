@@ -14,32 +14,38 @@ export class SessionService {
     private readonly userService: UsersService,
   ) {}
 
-  // async findSession(user1Id: number, user2Id: number): Promise<Session> {
-  //   // check for existing users
+  async getAllSessions(): Promise<Session[]> {
+    return await this.sessionRepository.find();
+  }
+  async findSession(user1Id: number, user2Id: number): Promise<Session> {
+    // check for existing users
 
-  //   const user1: User = await this.userService.find(user1Id);
-  //   const user2: User = await this.userService.find(user2Id);
+    const user1: User = await this.userService.find(user1Id);
+    const user2: User = await this.userService.find(user2Id);
 
-  //   try {
-  //     const session = user1.sessions.find((r) => user2.sessions.includes(r));
-  //     return this.sessionRepository.findOneOrFail({
-  //       where: { id: session?.id },
-  //     });
-  //   } catch {
-  //     throw new HttpException(
-  //       'Session not found between users',
-  //       HttpStatus.NOT_FOUND,
-  //     );
-  //   }
-  // }
+    try {
+      return await this.sessionRepository.findOneOrFail({
+        where: [{ users: user1 } && { users: user2 }],
+      });
+    } catch {
+      throw new HttpException(
+        'No session found between users',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
   async hasSession(user1: User, user2: User): Promise<boolean> {
     const answer = await this.sessionRepository.find({
       where: [{ users: user1 } && { users: user2 }],
     });
     return answer.length == 1;
   }
-  async getAllSessions(): Promise<Session[]> {
-    return await this.sessionRepository.find();
+  async getAllSessionsForUser(userID: number): Promise<Session[]> {
+    const user = await this.userService.find(userID);
+    return await this.sessionRepository.find({
+      where: { users: { id: (await user).id } },
+    });
   }
 
   async createSession(userID1: number, userID2: number): Promise<Session> {

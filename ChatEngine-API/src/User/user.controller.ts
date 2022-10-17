@@ -13,7 +13,7 @@ import { User } from './user.entity';
 import { UserFilter } from './user.filter';
 import { UsersService } from './user.service';
 
-@Controller('/User')
+@Controller('/user')
 export class UserController {
   constructor(private readonly service: UsersService) {}
   @Get('')

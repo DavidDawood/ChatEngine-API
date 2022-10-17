@@ -10,5 +10,6 @@ import { SessionService } from './session.service';
   imports: [TypeOrmModule.forFeature([Session]), UsersModule],
   controllers: [SessionController],
   providers: [SessionService],
+  exports: [SessionService],
 })
 export class SessionModule {}
