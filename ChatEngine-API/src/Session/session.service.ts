@@ -22,9 +22,14 @@ export class SessionService {
     const user2: User = await this.userService.find(user2Id);
 
     try {
-      return await this.sessionRepository.findOneOrFail({
-        where: [{ users: user1 } && { users: user2 }],
+      const result = await this.sessionRepository.find({
+        relations: { users: true },
+        where: { users: [{ id: user1Id }, { id: user2Id }] },
       });
+      if (result[0].users.length > 1) return result[0];
+      if (result[1].users.length > 1) return result[1];
+
+      throw Error();
     } catch {
       throw new HttpException(
         'No session found between users',
@@ -34,10 +39,14 @@ export class SessionService {
   }
 
   async findSessionByID(sessionID: number): Promise<Session> {
-    return await this.sessionRepository.findOneOrFail({
-      where: { id: sessionID },
-      relations: { users: true },
-    });
+    try {
+      return await this.sessionRepository.findOneOrFail({
+        where: { id: sessionID },
+        relations: { users: true },
+      });
+    } catch {
+      throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
+    }
   }
 
   async hasSession(user1: User, user2: User): Promise<boolean> {
@@ -48,11 +57,16 @@ export class SessionService {
     return answer.length == 1;
   }
   async getSessions(userID: number): Promise<Session[]> {
+    // this is quite inefficient but it will have to do for now, have it find all sessions related to the usersID, then find all sessions from that user so we can get all related users to that userID's aswell,should save on API calls by doing it here than having users call more than one API
     const user = await this.userService.find(userID);
-    return await this.sessionRepository.find({
-      relations: { users: true },
+    const sessionIDs = await this.sessionRepository.find({
+      relations: { users: false },
       where: { users: { id: (await user).id } },
+      select: { id: true },
     });
+    return Promise.all(
+      await sessionIDs.map(async (x) => await this.findSessionByID(x.id)),
+    );
   }
 
   async createSession(userID1: number, userID2: number): Promise<Session> {

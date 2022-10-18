@@ -9,13 +9,7 @@ import {
   Post,
   UseFilters,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import {
-  getConnection,
-  getRepository,
-  ObjectLiteral,
-  Repository,
-} from 'typeorm';
+
 import { SessionDTO } from './session.DTO';
 import { Session } from './session.entity';
 import { SessionService } from './session.service';
@@ -31,6 +25,10 @@ export class SessionController {
   @Get(':id')
   async GetSessionByID(@Param('id', ParseIntPipe) id: number) {
     return await this.sessionService.findSessionByID(id);
+  }
+  @Get('user/:id')
+  async GetUsersSessions(@Param('id', ParseIntPipe) id: number) {
+    return await this.sessionService.getSessions(id);
   }
   @Post('')
   async CreateSession(@Body() info: SessionDTO): Promise<Session> {
