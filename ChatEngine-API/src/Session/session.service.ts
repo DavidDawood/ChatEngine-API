@@ -18,8 +18,6 @@ export class SessionService {
     return await this.sessionRepository.find();
   }
   async findSession(user1Id: number, user2Id: number): Promise<Session> {
-    // check for existing users
-
     const user1: User = await this.userService.find(user1Id);
     const user2: User = await this.userService.find(user2Id);
 
@@ -35,15 +33,24 @@ export class SessionService {
     }
   }
 
+  async findSessionByID(sessionID: number): Promise<Session> {
+    return await this.sessionRepository.findOneOrFail({
+      where: { id: sessionID },
+      relations: { users: true },
+    });
+  }
+
   async hasSession(user1: User, user2: User): Promise<boolean> {
     const answer = await this.sessionRepository.find({
+      relations: { users: true },
       where: [{ users: user1 } && { users: user2 }],
     });
     return answer.length == 1;
   }
-  async getAllSessionsForUser(userID: number): Promise<Session[]> {
+  async getSessions(userID: number): Promise<Session[]> {
     const user = await this.userService.find(userID);
     return await this.sessionRepository.find({
+      relations: { users: true },
       where: { users: { id: (await user).id } },
     });
   }

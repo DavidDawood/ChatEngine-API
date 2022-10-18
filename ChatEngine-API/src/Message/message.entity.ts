@@ -22,10 +22,9 @@ export class Message {
   @ManyToOne(() => Session, (session) => session.id)
   session: Session;
 
-  constructor(messageText: string, sentByID: number, session: Session) {
+  constructor(messageText: string, sentByID: number) {
     this.message = messageText;
     this.sentByID = sentByID;
     this.timeSent = new Date();
-    this.session = session;
   }
 }

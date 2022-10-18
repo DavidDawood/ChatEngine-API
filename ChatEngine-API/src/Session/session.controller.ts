@@ -29,8 +29,8 @@ export class SessionController {
     return await this.sessionService.getAllSessions();
   }
   @Get(':id')
-  async GetAllSessionsFromUser(@Param('id', ParseIntPipe) id: number) {
-    return await this.sessionService.getAllSessionsForUser(id);
+  async GetSessionByID(@Param('id', ParseIntPipe) id: number) {
+    return await this.sessionService.findSessionByID(id);
   }
   @Post('')
   async CreateSession(@Body() info: SessionDTO): Promise<Session> {

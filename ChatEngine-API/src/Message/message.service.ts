@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from 'src/Session/session.entity';
 import { SessionService } from 'src/Session/session.service';
@@ -16,11 +16,19 @@ export class MessageService {
   ) {}
 
   async SendMessage(messageInfo: MessageDTO): Promise<Message> {
-    const message = new Message(
-      messageInfo.message,
-      messageInfo.user.id,
-      messageInfo.session,
+    const session: Session = await this.sessionService.findSessionByID(
+      messageInfo.sessionID,
     );
+
+    console.log(session.users);
+    if (!session.users.some((x) => x.id == messageInfo.userID))
+      throw new HttpException(
+        'User is not in the session',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const message = new Message(messageInfo.message, messageInfo.userID);
+    message.session = session;
     return this.messageRepository.save(message);
   }
   async GetAllMessagesInSession(user1: User, user2: User): Promise<Message[]> {
@@ -30,6 +38,11 @@ export class MessageService {
     );
     return this.messageRepository.find({
       where: { session: currentSession },
+    });
+  }
+  async GetAllMessagesInSessionByID(sessionID: number): Promise<Message[]> {
+    return this.messageRepository.find({
+      where: { session: { id: sessionID } },
     });
   }
 }

@@ -7,7 +7,7 @@ export class MessageDTO {
   @IsNotEmpty()
   message: string;
   @IsNotEmpty()
-  user: User;
+  userID: number;
   @IsNotEmpty()
-  session: Session;
+  sessionID: number;
 }
