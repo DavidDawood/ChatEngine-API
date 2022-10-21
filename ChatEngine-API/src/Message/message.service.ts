@@ -28,7 +28,7 @@ export class MessageService {
         HttpStatus.BAD_REQUEST,
       );
     const sqlUser = await this.userService.find(messageInfo.userID, true);
-    if (sqlUser.id != messageInfo.identifier)
+    if (sqlUser.identifier != messageInfo.identifier)
       throw new HttpException(
         'Identifier incorrect, recieve it via login',
         HttpStatus.BAD_REQUEST,
@@ -36,7 +36,9 @@ export class MessageService {
 
     const message = new Message(messageInfo.message, messageInfo.userID);
     message.session = session;
-    return this.messageRepository.save(message);
+    const savedMessage = await this.messageRepository.save(message);
+    savedMessage.session.users.map((x) => (x.identifier = -1));
+    return savedMessage;
   }
   async GetAllMessagesInSession(
     myUser: User,
@@ -55,7 +57,7 @@ export class MessageService {
       targetUser.id,
     );
     return this.messageRepository.find({
-      where: { session: currentSession },
+      where: { session: { id: currentSession.id } },
     });
   }
 }
