@@ -17,25 +17,30 @@ export class SessionService {
   async getAllSessions(): Promise<Session[]> {
     return await this.sessionRepository.find();
   }
-  async findSession(user1Id: number, user2Id: number): Promise<Session> {
-    const user1: User = await this.userService.find(user1Id);
-    const user2: User = await this.userService.find(user2Id);
+  async findSession(
+    myUserId: number,
+    myUserIdentifier: number,
+    user2Id: number,
+  ): Promise<Session> {
+    const user1: User = await this.userService.find(myUserId, true);
 
-    try {
-      const result = await this.sessionRepository.find({
-        relations: { users: true },
-        where: { users: [{ id: user1Id }, { id: user2Id }] },
-      });
-      if (result[0].users.length > 1) return result[0];
-      if (result[1].users.length > 1) return result[1];
-
-      throw Error();
-    } catch {
+    if (myUserId == user2Id)
       throw new HttpException(
-        'No session found between users',
-        HttpStatus.NOT_FOUND,
+        'both user IDs cant be the same',
+        HttpStatus.BAD_REQUEST,
       );
-    }
+    if (user1.identifier != myUserIdentifier)
+      throw new HttpException('identifier incorrect', HttpStatus.BAD_REQUEST);
+
+    const result = await this.sessionRepository.find({
+      relations: { users: true },
+      where: { users: [{ id: myUserId }, { id: user2Id }] },
+    });
+    result.map((x) => x.users.map((x) => (x.identifier = -1)));
+    if (result[0].users.length > 1) return result[0];
+    if (result[1].users.length > 1) return result[1];
+
+    throw new HttpException('no session found', HttpStatus.BAD_REQUEST);
   }
 
   async findSessionByID(sessionID: number): Promise<Session> {
@@ -49,16 +54,16 @@ export class SessionService {
     }
   }
 
-  async hasSession(user1: User, user2: User): Promise<boolean> {
-    const answer = await this.sessionRepository.find({
-      relations: { users: true },
-      where: [{ users: user1 } && { users: user2 }],
-    });
-    return answer.length == 1;
-  }
-  async getSessions(userID: number): Promise<Session[]> {
+  async getSessions(
+    userID: number,
+    identification: number,
+  ): Promise<Session[]> {
     // this is quite inefficient but it will have to do for now, have it find all sessions related to the usersID, then find all sessions from that user so we can get all related users to that userID's aswell,should save on API calls by doing it here than having users call more than one API
-    const user = await this.userService.find(userID);
+    const user = await this.userService.find(userID, false);
+
+    if (user.identifier != identification)
+      throw new HttpException('incorrect identifier', HttpStatus.BAD_REQUEST);
+
     const sessionIDs = await this.sessionRepository.find({
       relations: { users: false },
       where: { users: { id: (await user).id } },
@@ -69,20 +74,30 @@ export class SessionService {
     );
   }
 
-  async createSession(userID1: number, userID2: number): Promise<Session> {
+  async createSession(
+    userID1: number,
+    myUserIdentifier: number,
+    userID2: number,
+  ): Promise<Session> {
     if (userID1 == userID2)
       throw new HttpException(
         "Cannot create a session for two users with matching id's",
         HttpStatus.BAD_REQUEST,
       );
 
-    const user1 = await this.userService.find(userID1);
-    const user2 = await this.userService.find(userID2);
-    if (await this.hasSession(user1, user2))
-      throw new HttpException(
-        'Session already exists, try simply using it',
-        HttpStatus.CONFLICT,
-      );
+    const user1 = await this.userService.find(userID1, true);
+    const user2 = await this.userService.find(userID2, false);
+
+    if (user1.identifier != myUserIdentifier)
+      throw new HttpException('Incorrect Identifier', HttpStatus.BAD_REQUEST);
+
+    const foundSession = await this.findSession(
+      user1.id,
+      myUserIdentifier,
+      user2.id,
+    );
+    if (foundSession)
+      throw new HttpException('session already exists', HttpStatus.BAD_REQUEST);
 
     const session = new Session();
     session.users = [user1, user2]; // for some reason typeorm doesnt allow constructors for relationships

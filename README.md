@@ -19,3 +19,4 @@ person
 -   upon logging out or quitting browser, log out
 -   logged in = 1
 -   logged out = 0
+-   Add http identifier exception filters

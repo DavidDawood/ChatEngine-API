@@ -2,12 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
-  UseFilters,
 } from '@nestjs/common';
 
 import { SessionDTO } from './session.DTO';
@@ -22,23 +19,27 @@ export class SessionController {
   async GetAllSessions() {
     return await this.sessionService.getAllSessions();
   }
-  @Get(':id')
-  async GetSessionByID(@Param('id', ParseIntPipe) id: number) {
-    return await this.sessionService.findSessionByID(id);
-  }
-  @Get('user/:id')
-  async GetUsersSessions(@Param('id', ParseIntPipe) id: number) {
-    return await this.sessionService.getSessions(id);
+  @Get('user/:id/:identification')
+  async GetUsersSessions(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('identification', ParseIntPipe) identification: number,
+  ) {
+    return await this.sessionService.getSessions(id, identification);
   }
   @Post('')
   async CreateSession(@Body() info: SessionDTO): Promise<Session> {
-    return await this.sessionService.createSession(info.userID1, info.userID2);
+    return await this.sessionService.createSession(
+      info.myUser,
+      info.myUserIdentifier,
+      info.userID2,
+    );
   }
-  @Get(':id1/:id2')
+  @Get(':id1/:identifier/:id2')
   async FindSession(
     @Param('id1', ParseIntPipe) id1: number,
+    @Param('identifier', ParseIntPipe) identifier: number,
     @Param('id2', ParseIntPipe) id2: number,
   ) {
-    return await this.sessionService.findSession(id1, id2);
+    return await this.sessionService.findSession(id1, identifier, id2);
   }
 }

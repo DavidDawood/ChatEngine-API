@@ -2,11 +2,13 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   Param,
   ParseIntPipe,
   Post,
   UseFilters,
 } from '@nestjs/common';
+import { UpdateResult } from 'typeorm';
 
 import { UserDTO } from './user.DTO';
 import { User } from './user.entity';
@@ -22,7 +24,18 @@ export class UserController {
   }
   @Get(':id')
   async find(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.service.find(id);
+    return await this.service.find(id, false);
+  }
+  @Post('/login/:id')
+  async login(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.service.loginToUser(id);
+  }
+  @Post('/logout/:id/:identifier')
+  async logout(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('identifier', ParseIntPipe) identifier: number,
+  ): Promise<User> {
+    return this.service.logoutOfUser(id, identifier);
   }
 
   @Post('')

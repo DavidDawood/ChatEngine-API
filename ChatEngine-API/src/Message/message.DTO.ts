@@ -1,6 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
-import { Session } from 'src/Session/session.entity';
-import { User } from 'src/User/user.entity';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class MessageDTO {
   @IsString()
@@ -8,6 +6,9 @@ export class MessageDTO {
   message: string;
   @IsNotEmpty()
   userID: number;
+  @IsNotEmpty()
+  @IsNumber()
+  identifier: number;
   @IsNotEmpty()
   sessionID: number;
 }

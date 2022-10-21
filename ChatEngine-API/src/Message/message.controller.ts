@@ -20,20 +20,17 @@ export class MessageController {
   async SendMessage(@Body() message: MessageDTO) {
     return await this.messageService.SendMessage(message);
   }
-  @Get(':id1/:id2')
+  @Get(':id1/:identifier/:id2')
   async getAllMessages(
     @Param('id1', ParseIntPipe) id1: number,
+    @Param('identifier', ParseIntPipe) identifier: number,
     @Param('id2', ParseIntPipe) id2: number,
   ) {
-    const user1 = this.userService.find(id1);
-    const user2 = this.userService.find(id2);
+    const user1 = this.userService.find(id1, true);
+    const user2 = this.userService.find(id2, false);
 
     return await Promise.all([user1, user2]).then((x) =>
-      this.messageService.GetAllMessagesInSession(x[0], x[1]),
+      this.messageService.GetAllMessagesInSession(x[0], identifier, x[1]),
     );
-  }
-  @Get(':id')
-  async getAllMessagesForSessionID(@Param('id', ParseIntPipe) id: number) {
-    return await this.messageService.GetAllMessagesInSessionByID(id);
   }
 }
