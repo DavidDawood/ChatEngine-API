@@ -6,9 +6,10 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Sse,
   UseFilters,
 } from '@nestjs/common';
-import { UpdateResult } from 'typeorm';
+import { Observable, interval, map, Subject, switchMap } from 'rxjs';
 
 import { UserDTO } from './user.DTO';
 import { User } from './user.entity';
@@ -18,6 +19,17 @@ import { UsersService } from './user.service';
 @Controller('/user')
 export class UserController {
   constructor(private readonly service: UsersService) {}
+
+  // for now this will have to do, i unfortanely cannot figure out how to get it to be on click of the findAll with an obserable, ask about this later
+  @Sse('userUpdate')
+  async userUpdate(): Promise<Observable<MessageEvent>> {
+    return interval(5000).pipe(
+      await this.findAll().then((x) =>
+        map(() => ({ data: x } as MessageEvent)),
+      ),
+    );
+  }
+
   @Get('')
   async findAll(): Promise<User[]> {
     return await this.service.findAll();
