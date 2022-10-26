@@ -34,6 +34,10 @@ export class UserController {
   async find(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return await this.service.find(id, false);
   }
+  @Get(':name')
+  async findByName(@Param('name') name: string): Promise<User> {
+    return await this.service.findByName(name, false);
+  }
   @Post('/login/:id')
   async login(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.service.loginToUser(id);
