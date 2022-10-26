@@ -5,7 +5,10 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Sse,
 } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { ConvertMessageEvent } from 'src/SSE.service';
 
 import { SessionDTO } from './session.DTO';
 import { Session } from './session.entity';
@@ -16,7 +19,7 @@ export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
   @Get('')
-  async GetAllSessions() {
+  async GetAllSessions(): Promise<Session[]> {
     return await this.sessionService.getAllSessions();
   }
   @Get('user/:id/:identification')

@@ -5,7 +5,6 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  UseFilters,
 } from '@nestjs/common';
 import { UsersService } from 'src/User/user.service';
 import { MessageDTO } from './message.DTO';
@@ -16,6 +15,7 @@ export class MessageController {
     private readonly messageService: MessageService,
     private readonly userService: UsersService,
   ) {}
+
   @Post('')
   async SendMessage(@Body() message: MessageDTO) {
     return await this.messageService.SendMessage(message);

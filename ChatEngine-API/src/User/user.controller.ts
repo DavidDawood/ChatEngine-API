@@ -2,14 +2,14 @@ import {
   Body,
   Controller,
   Get,
-  Header,
   Param,
   ParseIntPipe,
   Post,
   Sse,
   UseFilters,
 } from '@nestjs/common';
-import { Observable, interval, map, Subject, switchMap } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ConvertMessageEvent } from 'src/SSE.service';
 
 import { UserDTO } from './user.DTO';
 import { User } from './user.entity';
@@ -23,11 +23,7 @@ export class UserController {
   // for now this will have to do, i unfortanely cannot figure out how to get it to be on click of the findAll with an obserable, ask about this later
   @Sse('userUpdate')
   async userUpdate(): Promise<Observable<MessageEvent>> {
-    return interval(5000).pipe(
-      await this.findAll().then((x) =>
-        map(() => ({ data: x } as MessageEvent)),
-      ),
-    );
+    return await ConvertMessageEvent(this.service.findAll(), 10000);
   }
 
   @Get('')
