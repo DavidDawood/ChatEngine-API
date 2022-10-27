@@ -8,7 +8,6 @@ import {
   Sse,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ConvertMessageEvent } from 'src/SSE.service';
 
 import { SessionDTO } from './session.DTO';
 import { Session } from './session.entity';

@@ -44,14 +44,10 @@ export class SessionService {
   }
 
   async findSessionByID(sessionID: number): Promise<Session> {
-    try {
-      return await this.sessionRepository.findOneOrFail({
-        where: { id: sessionID },
-        relations: { users: true },
-      });
-    } catch {
-      throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
-    }
+    return await this.sessionRepository.findOneOrFail({
+      where: { id: sessionID },
+      relations: { users: true },
+    });
   }
 
   async getSessions(
