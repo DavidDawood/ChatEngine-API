@@ -29,22 +29,21 @@ export class UsersService {
   }
 
   async findByName(name: string, includeIdentifier: boolean): Promise<User> {
-    return await this.usersRepository
-      .findOneOrFail({
-        where: { username: name },
-      })
-      .then((x) => {
-        if (!includeIdentifier) {
-          x.identifier = -1;
+    try {
+      return await this.usersRepository
+        .findOneOrFail({
+          where: { username: name },
+        })
+        .then((x) => {
+          if (!includeIdentifier) {
+            x.identifier = -1;
+            return x;
+          }
           return x;
-        }
-        return x;
-      })
-      .catch(() =>
-        Promise.reject(
-          new HttpException('User not found', HttpStatus.NOT_FOUND),
-        ),
-      );
+        });
+    } catch {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
   }
   async findAll(): Promise<User[]> {
     const item = await this.usersRepository.find();
