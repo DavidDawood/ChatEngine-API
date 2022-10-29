@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { rejects } from 'assert';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './user.entity';
 
 @Injectable()
@@ -16,16 +15,18 @@ export class UsersService {
 
   // this isnt in much use atm as each function may or may not grab the function
   async verifyIdentifer(userID: number, identifier: number): Promise<boolean> {
-    return this.find(userID, true)
-      .then((x) => x.identifier == identifier)
-      .catch((e) => e);
+    return this.find(userID, true).then((x) => x.identifier == identifier);
   }
   async find(id: number, includeIdentifier: boolean): Promise<User> {
-    const user = await this.usersRepository.findOneOrFail({
-      where: { id: id },
-    });
-    if (!includeIdentifier) user.identifier = -1;
-    return user;
+    try {
+      const user = await this.usersRepository.findOneOrFail({
+        where: { id: id },
+      });
+      if (!includeIdentifier) user.identifier = -1;
+      return user;
+    } catch {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
   }
 
   async findByName(name: string, includeIdentifier: boolean): Promise<User> {
