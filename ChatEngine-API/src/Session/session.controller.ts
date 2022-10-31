@@ -1,15 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Sse,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { Body, Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 
-import { SessionDTO } from './session.DTO';
 import { Session } from './session.entity';
 import { SessionService } from './session.service';
 
@@ -28,14 +18,7 @@ export class SessionController {
   ) {
     return await this.sessionService.getSessions(id, identification);
   }
-  @Post('')
-  async CreateSession(@Body() info: SessionDTO): Promise<Session> {
-    return await this.sessionService.createSession(
-      info.myUser,
-      info.myUserIdentifier,
-      info.userID2,
-    );
-  }
+
   @Get(':id1/:identifier/:id2')
   async FindSession(
     @Param('id1', ParseIntPipe) id1: number,

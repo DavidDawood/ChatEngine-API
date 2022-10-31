@@ -41,10 +41,4 @@ export class UserController {
   ): Promise<User> {
     return this.service.logoutOfUser(id, identifier);
   }
-
-  @Post('')
-  @UseFilters(new UserFilter())
-  async createUser(@Body() login: UserDTO): Promise<User> {
-    return await this.service.addUser(login.username);
-  }
 }

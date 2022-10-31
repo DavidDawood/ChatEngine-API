@@ -9,7 +9,7 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
-  async generateNewIdentifier(): Promise<number> {
+  generateNewIdentifier(): number {
     return Math.floor(Math.random() * 10000);
   }
 
@@ -53,7 +53,13 @@ export class UsersService {
   }
 
   async loginToUser(username: string): Promise<User> {
-    const user = await this.findByName(username, true);
+    const user = await this.findByName(username, true).catch(() => {
+      const newUser = new User(username);
+      newUser.identifier = this.generateNewIdentifier();
+      newUser.isActive = 1;
+      this.usersRepository.create({ username: username });
+      return Promise.resolve(newUser);
+    });
 
     if (user.isActive == 1)
       return Promise.reject(
@@ -77,19 +83,5 @@ export class UsersService {
     );
 
     return Promise.resolve(user);
-  }
-
-  async addUser(username: string): Promise<User> {
-    try {
-      await this.findByName(username, false);
-    } catch {
-      const user = new User(username);
-      user.identifier = await this.generateNewIdentifier();
-      return this.usersRepository.save(user);
-    }
-    throw new HttpException(
-      'username Found, login to it instead',
-      HttpStatus.BAD_REQUEST,
-    );
   }
 }

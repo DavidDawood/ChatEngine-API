@@ -40,13 +40,16 @@ export class SessionService {
     if (result[0].users.length > 1) return result[0];
     if (result[1].users.length > 1) return result[1];
 
-    throw new HttpException('no session found', HttpStatus.BAD_REQUEST);
+    return await this.createSession(myUserId, myUserIdentifier, user2Id);
   }
 
   async findSessionByID(sessionID: number): Promise<Session> {
     return await this.sessionRepository.findOneOrFail({
       where: { id: sessionID },
       relations: { users: true },
+      select: {
+        users: { username: true, id: true },
+      },
     });
   }
 
@@ -55,16 +58,16 @@ export class SessionService {
     identification: number,
   ): Promise<Session[]> {
     // this is quite inefficient but it will have to do for now, have it find all sessions related to the usersID, then find all sessions from that user so we can get all related users to that userID's aswell,should save on API calls by doing it here than having users call more than one API
-    const user = await this.userService.find(userID, false);
-
+    const user = await this.userService.find(userID, true);
     if (user.identifier != identification)
       throw new HttpException('incorrect identifier', HttpStatus.BAD_REQUEST);
 
     const sessionIDs = await this.sessionRepository.find({
-      relations: { users: false },
+      relations: { users: true },
       where: { users: { id: (await user).id } },
       select: { id: true },
     });
+
     return Promise.all(
       await sessionIDs.map(async (x) => await this.findSessionByID(x.id)),
     );
