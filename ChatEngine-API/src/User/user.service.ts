@@ -53,21 +53,23 @@ export class UsersService {
   }
 
   async loginToUser(username: string): Promise<User> {
-    const user = await this.findByName(username, true).catch(() => {
+    try {
+      const user = await this.findByName(username, true);
+
+      if (user.isActive == 1)
+        return Promise.reject(
+          new HttpException('User already logged in', HttpStatus.BAD_REQUEST),
+        );
+      await this.usersRepository.update({ id: user.id }, { isActive: 1 });
+      user.isActive = 1;
+      return Promise.resolve(user);
+    } catch {
       const newUser = new User(username);
       newUser.identifier = this.generateNewIdentifier();
       newUser.isActive = 1;
-      this.usersRepository.create({ username: username });
-      return Promise.resolve(newUser);
-    });
 
-    if (user.isActive == 1)
-      return Promise.reject(
-        new HttpException('User already logged in', HttpStatus.BAD_REQUEST),
-      );
-    await this.usersRepository.update({ id: user.id }, { isActive: 1 });
-    user.isActive = 1;
-    return Promise.resolve(user);
+      return await this.usersRepository.save(newUser);
+    }
   }
 
   async logoutOfUser(userId: number, identifier: number): Promise<User> {

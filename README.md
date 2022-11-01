@@ -1,22 +1,57 @@
 # Chatroom-API
 
-## Workings
+## Description
 
-Each user is asked a name (non sensitive), if it exists already they will need to make one until they have selected a name they havent already selected,
-on the right hand side will be a list of all people they may speak with in a random order with a maximum of 10, and a search bar with a chat logo next to it
-if someone types a name out (non sensitive) it will connect with that person
+The backend of a full front end and backend nestJS which allows users to view previous chats made by other anonymous users, think omegle but more public, more details and previews on the front-end API GIT README
 
-every time someone tries to message you you will recieve a notification which will allow you to chat back
+## Skills and technologies used
 
-Each chat session is saved in a database, and the next time someone tries to use those names they will be able to see all chats previously held by the other
-person
+-   React
+-   NestJS
+-   Typescript
+-   Javascript
+-   MySQL
 
-## To do
+## Setup
 
--   how will users know that an account is in use?, sql boolean with 0 & 1
--   will only have an API call for get all users?, users on the other end can decide if they want to filter all logged in users
--   have login to user function, check if it is in use or not
--   upon logging out or quitting browser, log out
--   logged in = 1
--   logged out = 0
--   Add http identifier exception filters
+-   Simply use the following commands
+    To install, be sure to cd into the second ChatEngine-API tree, the one containing all the actual files
+
+### NOTE
+
+-   If you would like to change the link or port for whatever reason, you may do so in the main.ts file in the src folder, change the number parameter inside of
+
+```
+await app.listen(3000);
+```
+
+```
+npm install
+```
+
+-   After you installed it, be sure to also create an .env file while using the exampleENV as a template to link it to your own mySQL, this is a neccessary step
+
+-   To run the page, also cd'ed into the second ChatEngine-API tree
+
+```
+npm run start
+```
+
+## Developer Notes
+
+-   As this is merely the backend, two instances must be made before being able to use the website, i have decided not to upload it to a cloud hosting software as i find not very useful to do only for a short while on such a useless project rather than have a more profitable application run full time.
+-   In terms of complexity, this was a fun challange to do as i am both balancing side projects as well as coding challanges at the same time, this also was a good was to fine tune my skills when it comes to MySQL and nestJS
+
+## Inner workings
+
+![dataStructure](/ChatEngine-API/images/dataStructure.png)
+
+-   structuring follows basic processes, a controller which use the access points to the front end while the services deal with all the nitty gritty work with the repository and logic
+
+## Possible future updates
+
+-   I would like to eventually make this go public as it is a project i had alot of fun with and learnt a tone too, so with possibly more work into it i will open it to a cloud hosting service, or possibly run it on a local server
+-   Some other features i would like to add are the following
+-   File uploading / images
+-   Video sharing / camera video feed
+-   Coop games for small online minigames
