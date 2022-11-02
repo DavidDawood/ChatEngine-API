@@ -44,7 +44,7 @@ npm run start
 
 ## Inner workings
 
-![dataStructure](/ChatEngine-API/images/dataStructure.png)
+![dataStructure](/images/dataStructure.png)
 
 -   structuring follows basic processes, a controller which use the access points to the front end while the services deal with all the nitty gritty work with the repository and logic
 
